@@ -1,57 +1,100 @@
-# ListenAlong Plugin for BetterDiscord
-
-<p align="center">
-  <img src="https://i.imgur.com/XYZ123.png" alt="ListenAlong Banner" width="600"/>
-</p>
+# EnyzelleLibrary
 
 ## Description
-ListenAlong is a BetterDiscord plugin that enables Spotify's Listen Along feature without requiring a Spotify Premium subscription. This allows you to join and participate in Discord's Listen Along sessions with friends.
 
-## Features
-- Enable Listen Along without Spotify Premium
-- Join friends' listening sessions
-- No modifications to Spotify's app required
-- Seamless integration with Discord
+EnyzelleLibrary is a comprehensive utility library for BetterDiscord plugins, offering core utilities, Discord API helpers, DOM manipulation tools, storage utilities, and more.
 
 ## Installation
-1. Download [BetterDiscord](https://betterdiscord.app/)
-2. Install BetterDiscord
-3. Download `ListenAlong.plugin.js`
-4. Move the plugin file to your BetterDiscord plugins folder:
+
+1. Ensure you have BetterDiscord installed. If not, you can download it from [BetterDiscord](https://betterdiscord.app/).
+2. Download EnyzelleLibrary:
+   - [EnyzelleLibrary.plugin.js](https://raw.githubusercontent.com/Enyzelle/EnyzelleLibrary/main/EnyzelleLibrary.plugin.js)
+3. Place the downloaded file into your BetterDiscord plugins folder:
    - Windows: `%appdata%/BetterDiscord/plugins`
    - Linux: `~/.config/BetterDiscord/plugins`
    - Mac: `~/Library/Application Support/BetterDiscord/plugins`
 
 ## Usage
-1. Enable the plugin in BetterDiscord settings
-2. Connect your Spotify account to Discord
-3. Join any Listen Along session or start one yourself
-4. Enjoy listening together with friends!
 
-## Requirements
-- BetterDiscord installed
-- Discord Desktop App
-- Spotify account connected to Discord
-- Spotify (Web or Desktop app)
+To use EnyzelleLibrary in your plugins, follow these steps:
 
-## Known Issues
-- May need to restart Discord after installation
-- Requires manual restart if Spotify connection is lost
+```javascript
+const config = {
+    info: {
+        name: "EnyzelleLibrary",
+        version: "1.0.0",
+        description: "A comprehensive utility library for BetterDiscord plugins",
+        author: "Enyzelle",
+        github: "https://github.com/Enyzelle/EnyzelleLibrary",
+        github_raw: "https://raw.githubusercontent.com/Enyzelle/EnyzelleLibrary/main/EnyzelleLibrary.plugin.js"
+    },
+    changelog: [
+        {
+            title: "Initial Release",
+            items: [
+                "First release",
+                "Added core utilities",
+                "Added Discord API utilities",
+                "Added DOM manipulation utilities",
+                "Added storage utilities"
+            ]
+        }
+    ]
+};
 
-## Disclaimer
-This plugin is for educational purposes only. Use at your own risk. I am not responsible for any account actions that may result from using this plugin.
+module.exports = class EnyzelleLibrary {
+    constructor() {
+        this.initialized = false;
+        this._config = config;
+    }
 
+    getName() { return config.info.name; }
+    getDescription() { return config.info.description; }
+    getVersion() { return config.info.version; }
+    getAuthor() { return config.info.author; }
+
+    start() {
+        if (this.initialized) return;
+        this.initialize();
+        BdApi.showToast("EnyzelleLibrary has been loaded!", { type: "success" });
+    }
+
+    stop() {
+        this.initialized = false;
+        delete window.EnyLib;
+    }
+
+    initialize() {
+        // Initialization logic here
+    }
+};
+```
+## Features
+- **Core Utilities:** Includes versioning, initialization check, configuration handling, and more.
+- **Discord API Utilities:** Simplifies interaction with Discord's API for current user, channels, and guilds.
+- **DOM Manipulation:** Provides functions for easy HTML DOM manipulation.
+- **Storage Utilities:** Offers methods to store and retrieve plugin data using BetterDiscord's storage API.
+
+## Changelog
+# Version 1.0.0
+
+- **Initial Release**
+  - First release of EnyzelleLibrary
+  - Added core utilities, Discord API utilities, DOM manipulation utilities, storage utilities
+ 
 ## Support
-If you encounter any issues or have suggestions:
-- Open an issue on GitHub
-- Contact me on Discord: Enyzelle
+
+For issues or suggestions, please open an issue on [GitHub](https://github.com/Enyzelle/EnyzelleLibrary/issues).
 
 ## License
-This project is licensed under MIT License - see the LICENSE file for details.
 
-## Credits
-- Created by Enyzelle
-- Thanks to the BetterDiscord community
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-> **Note**: This plugin is not affiliated with Discord or Spotify. Use responsibly and at your own risk.
+## Author
+
+- **Enyzelle**
+  - GitHub: [@Enyzelle](https://github.com/Enyzelle)
+  - Discord: Enyzelle#0000
+
+## Disclaimer
+> This plugin is not affiliated with Discord. Use at your own risk.
