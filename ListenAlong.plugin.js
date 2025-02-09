@@ -1,5 +1,5 @@
 /**
- * @name ListenAlongV2
+ * @name ListenAlong
  * @author Enyzelle
  * @description Enable Spotify listen along without premium
  * @version 1.1.1
