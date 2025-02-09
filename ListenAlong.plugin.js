@@ -1,102 +1,97 @@
 /**
- * @name ListenAlong
+ * @name ListenAlongV2
  * @author Enyzelle
  * @description Enable Spotify listen along without premium
- * @version 1.1.0
+ * @version 1.1.1
  * @website https://github.com/Enyzelle/ListenAlong
  * @source https://raw.githubusercontent.com/Enyzelle/ListenAlong/main/ListenAlong.plugin.js
  */
 
-
-
 const config = {
     info: {
-        name: "ListenAlongWithoutPremium",
+        name: "ListenAlong",
         authors: [{
-            name: "Claude",
-            discord_id: "000000000000000000",
+            name: "Enyzelle",
+            discord_id: "1317482100290752604",
         }],
-        version: "1.1.0",
-        description: "Enable Spotify listen along without premium",
-        github: "https://github.com/YourUsername/ListenAlongWithoutPremium",
-        github_raw: "https://raw.githubusercontent.com/YourUsername/ListenAlongWithoutPremium/main/ListenAlongWithoutPremium.plugin.js"
-    },
-    changelog: [
-        {
-            title: "Improvements",
-            items: [
-                "Added better error handling",
-                "Improved module structure",
-                "Added status messages"
-            ]
-        }
-    ]
+        version: "1.1.1",
+        description: "Enable Spotify listen along without premium"
+    }
 };
 
-module.exports = class ListenAlongWithoutPremium {
+module.exports = class ListenAlong {
     constructor() {
         this.initialized = false;
     }
 
-    // Required function. Called when the plugin is enabled
     start() {
         try {
             this.initialize();
-            BdApi.showToast("ListenAlongWithoutPremium has started!", {type: "success"});
+            BdApi.showToast("ListenAlong has started!", {type: "success"});
         } catch (err) {
-            BdApi.showToast("Failed to start ListenAlongWithoutPremium", {type: "error"});
-            console.error("ListenAlongWithoutPremium: Failed to start -", err);
+            BdApi.showToast("Failed to start ListenAlong", {type: "error"});
+            console.error("ListenAlong: Failed to start -", err);
         }
     }
 
-    // Required function. Called when the plugin is disabled
     stop() {
         try {
-            BdApi.Patcher.unpatchAll("ListenAlongWithoutPremium");
+            BdApi.Patcher.unpatchAll("ListenAlong");
             this.initialized = false;
-            BdApi.showToast("ListenAlongWithoutPremium has stopped!", {type: "success"});
+            BdApi.showToast("ListenAlong has stopped!", {type: "success"});
         } catch (err) {
-            console.error("ListenAlongWithoutPremium: Failed to stop -", err);
+            console.error("ListenAlong: Failed to stop -", err);
         }
     }
 
-    // Initialize the plugin
     initialize() {
         if (this.initialized) return;
-        this.patchSpotifyModule();
-        this.patchListenAlongButton();
+        
+        // Get the Spotify device store module
+        const DeviceStore = BdApi.Webpack.getModule(m => m?.getActiveSocketAndDevice);
+        
+        // Get the listening along store module
+        const ListenStore = BdApi.Webpack.getModule(m => m?.isListeningAlong || m?.getListeningAlongStatus);
+        
+        if (DeviceStore?.getActiveSocketAndDevice) {
+            // Patch the device store to always return premium status
+            BdApi.Patcher.after("ListenAlong", DeviceStore, "getActiveSocketAndDevice", 
+                (_, args, ret) => {
+                    if (ret?.socket) {
+                        ret.socket.isPremium = true;
+                    }
+                    return ret;
+                }
+            );
+            console.log("Successfully patched Spotify device store");
+        } else {
+            throw new Error("Could not find Spotify device store module");
+        }
+
+        // Patch the listening along status
+        if (ListenStore) {
+            // Patch isListeningAlong check
+            if (typeof ListenStore.isListeningAlong === 'function') {
+                BdApi.Patcher.after("ListenAlong", ListenStore, "isListeningAlong",
+                    (_, args, ret) => {
+                        return true; // Always show as listening along
+                    }
+                );
+            }
+
+            // Patch getListeningAlongStatus
+            if (typeof ListenStore.getListeningAlongStatus === 'function') {
+                BdApi.Patcher.after("ListenAlong", ListenStore, "getListeningAlongStatus",
+                    (_, args, ret) => {
+                        return { isListeningAlong: true }; // Force listening along status
+                    }
+                );
+            }
+
+            console.log("Successfully patched listening along status");
+        }
+
         this.initialized = true;
-    }
-
-    // Patch Spotify premium check
-    patchSpotifyModule() {
-        const SpotifyProtocol = BdApi.Webpack.getModule(m => m?.getActivity && m?.isSpotifyProtocol);
-        
-        if (!SpotifyProtocol) {
-            throw new Error("Could not find Spotify module!");
-        }
-
-        BdApi.Patcher.instead("ListenAlongWithoutPremium", SpotifyProtocol, "isPremium", () => {
-            return true;
-        });
-    }
-
-    // Patch Listen Along button visibility
-    patchListenAlongButton() {
-        const ListenAlongStore = BdApi.Webpack.getModule(m => m?.isListeningAlong);
-        
-        if (!ListenAlongStore) {
-            throw new Error("Could not find ListenAlong module!");
-        }
-
-        BdApi.Patcher.instead("ListenAlongWithoutPremium", ListenAlongStore, "canListenAlong", () => {
-            return true;
-        });
-    }
-
-    // Required function. Called to get info about the plugin
-    getSettingsPanel() {
-        return null; // This plugin has no settings
     }
 };
 
