@@ -76,7 +76,7 @@ module.exports = class EnyzelleLibrary {
 - **Storage Utilities:** Offers methods to store and retrieve plugin data using BetterDiscord's storage API.
 
 ## Changelog
-# Version 1.0.0
+### Version 1.0.0
 
 - **Initial Release**
   - First release of EnyzelleLibrary
