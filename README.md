@@ -1,100 +1,104 @@
-# EnyzelleLibrary
+# Enyzelle Library
 
-## Description
+A comprehensive utility library for BetterDiscord plugin development.
 
-EnyzelleLibrary is a comprehensive utility library for BetterDiscord plugins, offering core utilities, Discord API helpers, DOM manipulation tools, storage utilities, and more.
+## Features
+
+- **DOM Utilities**: Create and manipulate DOM elements easily
+- **Logger**: Consistent logging with prefix and styling
+- **Settings Panel Builder**: Create settings panels with various input types
+- **Discord Utility Functions**: Access Discord data easily
+- **HTTP Requests**: Simple Promise-based API for HTTP requests
+- **UI Components**: Ready-to-use modals and toast notifications
+- **Utility Functions**: Common utilities like debounce, throttle, and more
+- **CSS Injector**: Safely inject and remove CSS
 
 ## Installation
 
-1. Ensure you have BetterDiscord installed. If not, you can download it from [BetterDiscord](https://betterdiscord.app/).
-2. Download EnyzelleLibrary:
-   - [EnyzelleLibrary.plugin.js](https://raw.githubusercontent.com/Enyzelle/EnyzelleLibrary/main/EnyzelleLibrary.plugin.js)
-3. Place the downloaded file into your BetterDiscord plugins folder:
-   - Windows: `%appdata%/BetterDiscord/plugins`
-   - Linux: `~/.config/BetterDiscord/plugins`
-   - Mac: `~/Library/Application Support/BetterDiscord/plugins`
+1. Download the [latest release](https://github.com/Enyzelle/EnyzelleLibrary/releases/latest)
+2. Place the file in your BetterDiscord plugins folder
+3. Enable the plugin in BetterDiscord settings
 
 ## Usage
 
-To use EnyzelleLibrary in your plugins, follow these steps:
+Once enabled, the library is available globally as `window.EnyzelleLib`. You can use it in your plugins like this:
 
-```javascript
-const config = {
-    info: {
-        name: "EnyzelleLibrary",
-        version: "1.0.0",
-        description: "A comprehensive utility library for BetterDiscord plugins",
-        author: "Enyzelle",
-        github: "https://github.com/Enyzelle/EnyzelleLibrary",
-        github_raw: "https://raw.githubusercontent.com/Enyzelle/EnyzelleLibrary/main/EnyzelleLibrary.plugin.js"
-    },
-    changelog: [
-        {
-            title: "Initial Release",
-            items: [
-                "First release",
-                "Added core utilities",
-                "Added Discord API utilities",
-                "Added DOM manipulation utilities",
-                "Added storage utilities"
-            ]
-        }
-    ]
-};
+```js
+// Create a toast notification
+EnyzelleLib.Components.createToast("Hello World!", {
+  type: "success", // info, success, warning, error
+  duration: 3000
+}).show();
 
-module.exports = class EnyzelleLibrary {
-    constructor() {
-        this.initialized = false;
-        this._config = config;
-    }
+// Create a modal
+const modal = EnyzelleLib.Components.createModal(
+  "My Modal Title", 
+  "This is the modal content"
+);
+modal.show();
 
-    getName() { return config.info.name; }
-    getDescription() { return config.info.description; }
-    getVersion() { return config.info.version; }
-    getAuthor() { return config.info.author; }
+// Make an HTTP request
+EnyzelleLib.Request.get("https://api.example.com/data")
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
 
-    start() {
-        if (this.initialized) return;
-        this.initialize();
-        BdApi.showToast("EnyzelleLibrary has been loaded!", { type: "success" });
-    }
-
-    stop() {
-        this.initialized = false;
-        delete window.EnyLib;
-    }
-
-    initialize() {
-        // Initialization logic here
-    }
-};
+// Use utility functions
+const debouncedFunction = EnyzelleLib.Utilities.debounce(() => {
+  console.log("This function is debounced");
+}, 300);
 ```
-## Features
-- **Core Utilities:** Includes versioning, initialization check, configuration handling, and more.
-- **Discord API Utilities:** Simplifies interaction with Discord's API for current user, channels, and guilds.
-- **DOM Manipulation:** Provides functions for easy HTML DOM manipulation.
-- **Storage Utilities:** Offers methods to store and retrieve plugin data using BetterDiscord's storage API.
 
-## Changelog
-### Version 1.0.0
+## API Documentation
 
-- **Initial Release**
-  - First release of EnyzelleLibrary
-  - Added core utilities, Discord API utilities, DOM manipulation utilities, storage utilities
- 
-## Support
+### DOM Utilities
 
-For issues or suggestions, please open an issue on [GitHub](https://github.com/Enyzelle/EnyzelleLibrary/issues).
+- `createElement(tagName, options)`: Create a DOM element with the given properties
+- `query(selector, context)`: Query selector with optional context
+- `queryAll(selector, context)`: Query selector all with optional context
+
+### Logger
+
+- `log(message, type)`: Log a message with the library prefix
+- `info(message)`: Log an info message
+- `warn(message)`: Log a warning message
+- `error(message)`: Log an error message
+
+### Settings Panel Builder
+
+- `createPanel(settings, saveCallback)`: Create a settings panel with various input types
+
+### Discord Utility Functions
+
+- `getCurrentUserId()`: Get the current user ID
+- `getCurrentGuildId()`: Get the current guild ID
+- `getCurrentChannelId()`: Get the current channel ID
+
+### HTTP Requests
+
+- `get(url, options)`: Perform a GET request
+- `post(url, data, options)`: Perform a POST request
+
+### UI Components
+
+- `createModal(title, content)`: Create a modal dialog
+- `createToast(message, options)`: Create a toast notification
+
+### Utility Functions
+
+- `debounce(func, wait)`: Debounce a function
+- `throttle(func, limit)`: Throttle a function
+- `deepClone(obj)`: Deep clone an object
+- `randomString(length)`: Generate a random string
+
+### CSS Injector
+
+- `inject(id, css)`: Inject CSS into the document
+- `remove(id)`: Remove injected CSS
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License
 
 ## Author
 
-- **Enyzelle**
-  - GitHub: [@Enyzelle](https://github.com/Enyzelle)
-  - Discord: Enyzelle#0000
-
-## Disclaimer
-> This plugin is not affiliated with Discord. Use at your own risk.
+- [Enyzelle](https://github.com/Enyzelle) 
